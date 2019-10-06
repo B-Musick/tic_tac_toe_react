@@ -6,9 +6,15 @@ class Tile extends React.Component{
     state = {}
 
     render(){
-        
+        let tileWidth=100;
+        let xCoord = (this.props.index) % 3 * tileWidth + "";
+        let yCoord = (Math.floor((this.props.index) / 3)) * tileWidth + "";
         return(
-            <rect id={"tile-" + this.props.index}></rect>
+            <g>
+                <rect id={"tile-" + this.props.index} x={xCoord} y={yCoord}></rect>
+                <text x={parseInt(xCoord) + tileWidth / 2 + ""} y={parseInt(yCoord) + tileWidth / 2 + ""} style={{ color: 'black', fontSize: '20px' }}>{this.props.letter}</text>
+            </g>
+
         )
     }
 }
@@ -23,49 +29,11 @@ class Board extends React.Component{
         })
     }
     render(){
-        return <div>{this.mapTiles()}</div>;
+        return this.mapTiles();
     }
 }
 class Canvas extends React.Component {
     state = {}
-
-    // drawBoard(){
-    //     // Draw the board squares in the canvas
-    //     let svgCanvas = d3.select('#root').append('svg');
-    //     let tileWidth = 80;
-    //     let fontSize = 40;
-    //     svgCanvas.attr('width',tileWidth*this.props.board.length)
-    //         .attr('height', tileWidth * this.props.board.length);
-        
-        
-    //     for(let i = 0; i<this.props.board.length; i++){
-    //         for (let j = 0; j < this.props.board.length; j++) {
-                
-    //             svgCanvas.append('rect')
-    //                 .attr('x',(tileWidth*j)+'')
-    //                 .attr('y', (tileWidth * i) + '')
-    //                 .attr('width',tileWidth+"")
-    //                 .attr('height',tileWidth+"")
-    //                 .style('fill','black');
-                
-    //             if (this.props.board[i][j]){
-    //                 // If the array contains a letter here then print it
-    //                 svgCanvas.append('text')
-    //                     .text(this.props.board[i][j])
-    //                     .attr('x', parseInt(tileWidth) + ((parseInt(tileWidth)) * j) - (parseInt(tileWidth) / 2) - fontSize / 3 + "")
-    //                     .attr('y', parseInt(tileWidth) + ((parseInt(tileWidth)) * i) - (parseInt(tileWidth) / 2) + fontSize / 4 + "")
-    //                     .style('fill', 'blue')
-    //                     .attr('font-size', fontSize + "")
-    //                     .attr('color', 'blue')
-                        
-    //             }
-
-                    
-                
-    //         }  
-    //     }
-    // }
-
 
     render(){
         
@@ -94,3 +62,42 @@ ReactDOM.render(
     <App />,
     document.getElementById('root')
 )
+
+
+    // drawBoard(){
+    //     // Draw the board squares in the canvas
+    //     let svgCanvas = d3.select('#root').append('svg');
+    //     let tileWidth = 80;
+    //     let fontSize = 40;
+    //     svgCanvas.attr('width',tileWidth*this.props.board.length)
+    //         .attr('height', tileWidth * this.props.board.length);
+
+
+    //     for(let i = 0; i<this.props.board.length; i++){
+    //         for (let j = 0; j < this.props.board.length; j++) {
+
+    //             svgCanvas.append('rect')
+    //                 .attr('x',(tileWidth*j)+'')
+    //                 .attr('y', (tileWidth * i) + '')
+    //                 .attr('width',tileWidth+"")
+    //                 .attr('height',tileWidth+"")
+    //                 .style('fill','black');
+
+    //             if (this.props.board[i][j]){
+    //                 // If the array contains a letter here then print it
+    //                 svgCanvas.append('text')
+    //                     .text(this.props.board[i][j])
+    //                     .attr('x', parseInt(tileWidth) + ((parseInt(tileWidth)) * j) - (parseInt(tileWidth) / 2) - fontSize / 3 + "")
+    //                     .attr('y', parseInt(tileWidth) + ((parseInt(tileWidth)) * i) - (parseInt(tileWidth) / 2) + fontSize / 4 + "")
+    //                     .style('fill', 'blue')
+    //                     .attr('font-size', fontSize + "")
+    //                     .attr('color', 'blue')
+
+    //             }
+
+
+
+    //         }  
+    //     }
+    // }
+
