@@ -1,9 +1,19 @@
 svg{
     width: 300px;
     height: 300px;
+    border: 40px solid black;
+    font-size: 60px;
 }
 rect{
     fill: blue;
     width: 100px;
     height: 100px;
+    stroke: black;
+    stroke-width: 4;
+    
+}
+text{
+    font: bold 110px sans-serif;
+    font-family: 'Mukta', sans-serif; 
+    
 }

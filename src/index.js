@@ -5,14 +5,26 @@ import ReactDOM from 'react-dom';
 class Tile extends React.Component{
     state = {}
 
+    handleClick=(e)=>{
+        e.preventDefault();
+        // Pass the index which was clicked up to the Board component to change state
+        if(this.props.letter===""){
+            // If it is an empty space then let a letter be placed at this index
+            this.props.handleClick(this.props.index);
+        }
+        
+    }
+        
+    
     render(){
         let tileWidth=100;
         let xCoord = (this.props.index) % 3 * tileWidth + "";
         let yCoord = (Math.floor((this.props.index) / 3)) * tileWidth + "";
+        let letterColor = this.props.letter === 'X' ? 'red':'green';
         return(
             <g>
-                <rect id={"tile-" + this.props.index} x={xCoord} y={yCoord}></rect>
-                <text x={parseInt(xCoord) + tileWidth / 2 + ""} y={parseInt(yCoord) + tileWidth / 2 + ""} style={{ color: 'black', fontSize: '20px' }}>{this.props.letter}</text>
+                <rect onClick={this.handleClick} id={"tile-" + this.props.index} x={xCoord} y={yCoord}></rect>
+                <text textLength={'100px'} x={parseInt(xCoord) + 15 + ""} y={parseInt(yCoord) + (tileWidth-10)  + ""} style={{ fill:letterColor}}>{this.props.letter}</text>
             </g>
 
         )
@@ -20,12 +32,33 @@ class Tile extends React.Component{
 }
 class Board extends React.Component{
     // This will loop through the board values and pass them to the Tile Components
-    state={}
+    state = { board: ["", "", "", "", "", "", "", "", ""]}
 
+    handleClick=(index)=>{
+        this.setState(state => {
+            console.log(state)
+            let board = state.board.map((tile,i) =>{
+                if(index===i){
+                    return tile+"X";
+                }
+                return tile;
+            });
+            // Need this so it returns the array, if just returned what was above,
+            // it would return an object with indices mapped out
+            return {
+                board,
+            };
+            
+            
+            
+
+        });
+        console.log(this.state.board)
+    }
     mapTiles=()=>{
-        return this.props.board.map((tileLetter,index)=>{
+        return this.state.board.map((tileLetter,index)=>{
             console.log(tileLetter)
-            return <Tile index={index} letter={tileLetter} />
+            return <Tile index={index} letter={tileLetter} handleClick={this.handleClick}/>
         })
     }
     render(){
@@ -33,13 +66,14 @@ class Board extends React.Component{
     }
 }
 class Canvas extends React.Component {
-    state = {}
+    state = { }
+
 
     render(){
         
         return (
             <svg>
-                <Board board={this.props.board}/>
+                <Board />
             </svg>
         );
     }
@@ -48,12 +82,12 @@ class Canvas extends React.Component {
 
 class App extends React.Component{
     state={
-        board:["X","X", "","", "","", "","",""]
+        
     }
 
     render(){
-        // {console.log(this.state.board)}
-        return <Canvas board={this.state.board}/>;
+        
+        return <Canvas/>;
     }
 }
 
