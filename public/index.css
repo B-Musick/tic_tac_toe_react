@@ -5,7 +5,7 @@ svg{
     font-size: 60px;
 }
 rect{
-    fill: blue;
+    fill: rgb(116, 149, 247);
     width: 100px;
     height: 100px;
     stroke: black;
