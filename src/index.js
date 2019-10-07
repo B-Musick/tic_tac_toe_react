@@ -32,21 +32,29 @@ class Tile extends React.Component{
 }
 class Board extends React.Component{
     // This will loop through the board values and pass them to the Tile Components
-    state = { board: ["", "", "", "", "", "", "", "", ""]}
+    state = { 
+        board: ["", "", "", "", "", "", "", "", ""],
+        player: Math.ceil(Math.random()*10) <=5 ? true: false // player1 = true, player2=false
+    }
 
     handleClick=(index)=>{
+        let letter = this.state.player ? 'X': 'O'; // This will determine who is playing
+        
         this.setState(state => {
             console.log(state)
             let board = state.board.map((tile,i) =>{
                 if(index===i){
-                    return tile+"X";
+                    // If the index matches the one clicked then add letter
+                    return tile+letter+"";
                 }
                 return tile;
             });
             // Need this so it returns the array, if just returned what was above,
             // it would return an object with indices mapped out
+            let player = !this.state.player; // Change to next player
             return {
                 board,
+                player
             };
             
             
@@ -58,7 +66,7 @@ class Board extends React.Component{
     mapTiles=()=>{
         return this.state.board.map((tileLetter,index)=>{
             console.log(tileLetter)
-            return <Tile index={index} letter={tileLetter} handleClick={this.handleClick}/>
+            return <Tile index={index} letter={tileLetter} handleClick={this.handleClick} player={this.state.player}/>
         })
     }
     render(){
