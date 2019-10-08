@@ -50,13 +50,6 @@ class Board extends React.Component{
     }
     componentDidUpdate(nextProps,nextState){
         this.gameOver();
-        if(this.state.gameOver){
-            
-            this.reset();
-            return false;
-        }else{
-            return true;
-        }
     }
     handleClick=(index)=>{
         
@@ -175,6 +168,17 @@ class Board extends React.Component{
 
             };
         })
+        if (this.state.gameOver) {
+            
+                this.reset();
+            
+
+           
+            
+            return false;
+        } else {
+            return true;
+        }
         
         
         
@@ -210,11 +214,41 @@ class Canvas extends React.Component {
 
 }
 
-class App extends React.Component{
+class LoadScreen extends React.Component{
     state={}
 
+    onePlayer=()=>{
+        this.props.setPlayers('1');
+    }
+
+    twoPlayer=()=> {
+        this.props.setPlayers('2');
+    }
     render(){
-        return <Canvas/>;
+        return (
+            <div>
+                <div>One Player or Two?</div>
+                <button onClick={this.onePlayer}>One</button>
+                <button onClick={this.twoPlayer}>Two</button>
+            </div>
+        )
+    }
+}
+class App extends React.Component{
+    state={
+        gameStarted: false,
+        players: ''
+    }
+
+    setPlayers=(players)=>{
+        // Passed into LoadScreen component
+        // User selects how many players and which letter they want
+        this.setState({players})
+    }
+    render(){
+        console.log(this.state.players)
+        if(this.state.gameStarted) return <Canvas/>;
+        else return <LoadScreen setPlayers={this.setPlayers}/>
     }
 }
 
