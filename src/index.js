@@ -225,6 +225,7 @@ class LoadScreen extends React.Component{
         this.props.setPlayers('2');
     }
     render(){
+        
         return (
             <div>
                 <div>One Player or Two?</div>
@@ -234,10 +235,36 @@ class LoadScreen extends React.Component{
         )
     }
 }
+
+class SelectLetter extends React.Component{
+    state={
+
+    }
+
+    playerX=()=>{
+        // Player X starts as true
+        this.props.setLetter(true);
+    }
+
+    playerY=()=> {
+        this.props.setLetter(false);
+    }
+    render(){
+        return(
+            <div>
+                <div>Which letter is player 1?</div>
+                <button onClick={this.playerX}>X</button>
+                <button onClick={this.playerY}>O</button>
+            </div>
+        )
+    }
+}
 class App extends React.Component{
     state={
         gameStarted: false,
-        players: ''
+        players: '',
+        player: ''
+
     }
 
     setPlayers=(players)=>{
@@ -245,10 +272,18 @@ class App extends React.Component{
         // User selects how many players and which letter they want
         this.setState({players})
     }
+
+    setLetter=(letter)=>{
+        // Set the letter (true = 'X', false='O')
+        // Start the game
+        this.setState({player:letter,gameStarted:true})
+    }
+
     render(){
         console.log(this.state.players)
         if(this.state.gameStarted) return <Canvas/>;
-        else return <LoadScreen setPlayers={this.setPlayers}/>
+        else if(this.state.players){return <SelectLetter setLetter={this.setLetter}/>}
+        else { return <LoadScreen setPlayers={this.setPlayers} /> }
     }
 }
 
