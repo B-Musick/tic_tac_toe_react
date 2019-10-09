@@ -7,10 +7,11 @@ class Tile extends React.Component{
 
     handleClick=(e)=>{
         e.preventDefault();
-        // Pass the index which was clicked up to the Board component to change state
-        console.log(this.props.gameOver)
+        // Pass the index which was clicked up to the CANVAS component to change state
+        
         if (!this.props.gameOver && this.props.letter === ""){
             // If it is an empty space then let a letter be placed at this index
+            // Also this only occurs if the game isnt over
             this.props.handleClick(this.props.index);
         }
         
@@ -23,6 +24,8 @@ class Tile extends React.Component{
         let yCoord = (Math.floor((this.props.index) / 3)) * tileWidth + "";
         let letterColor = this.props.letter === 'X' ? 'rgb(145, 119, 206)' :'rgb(119, 206, 122)'; // Determine color of letter
         return(
+            // Set the tile rectangle into the canvas to proper x and y coordinates
+            // Give specific id based on index
             <g>
                 <rect onClick={this.handleClick} id={"tile-" + this.props.index} x={xCoord} y={yCoord}></rect>
                 <text textLength={'100px'} x={parseInt(xCoord) + 15 + ""} y={parseInt(yCoord) + (tileWidth-10)  + ""} style={{ fill:letterColor}}>{this.props.letter}</text>
@@ -30,11 +33,16 @@ class Tile extends React.Component{
         )
     }
 }
-class Board extends React.Component{
+
+/******************************** CANVAS COMPONENT **************************** */
+class Canvas extends React.Component{
     // This will loop through the board values and pass them to the Tile Components
     state = { 
-        board: ["", "", "", "", "", "", "", "", ""],
-        player: Math.ceil(Math.random() * 10) <= 5 ? true : false,// player1 = true, player2=false
+        /**
+         * board - Holds letters, called in mapTiles
+         */
+        board: ["", "", "", "", "", "", "", "", ""], 
+        player: this.props.player,// player1 = true, player2=false, passed in from App
         winningIndices:[
             [0, 1, 2],
             [3, 4, 5],
@@ -43,40 +51,57 @@ class Board extends React.Component{
             [1, 4, 7],
             [2, 5, 8],
             [0, 4, 8],
-            [2, 4, 5]
-        ],
+            [2, 4, 6]
+        ], //
         gameOver: false,
-        scores: [0,0]
+        scores: [0,0],
+        players: this.props.players
     }
-    componentDidUpdate(nextProps,nextState){
-        this.gameOver();
+
+    componentDidUpdate(){
+        if(this.state.players === '1'){
+            console.log('One player')
+        }
+        if(this.state.gameOver){
+            console.log('hi');
+        }
     }
     handleClick=(index)=>{
-        
-        // Passed into Tile, retrieves tile index when that tile clicked and doesnt contain a letter yet
-        let letter = this.state.player ? 'X': 'O'; // This will determine who is playing
-        
-        this.setState(state => {
-            
-            let board = state.board.map((tile,i) =>{
-                if(index===i){
-                    // If the index matches the one clicked then add letter
-                    return tile+letter+"";
-                }
-                return tile;
-            });
-            // Need this so it returns the array, if just returned what was above,
-            // it would return an object with indices mapped out
-            let player = !this.state.player; // Change to next player
-            return {
-                board,
-                player
-            };  
-        });
+        /* Passed into Tile, retrieves tile index when that tile clicked and doesnt contain a letter yet
+        * Finds the tile which was clicked and adds letter to this index
+        */
+       if(!this.state.gameOver){
+           let letter = this.state.player ? 'X' : 'O'; // This will determine who is playing
+
+           this.setState(state => {
+
+               let board = state.board.map((tile, i) => {
+                   if (index === i) {
+                       // If the index matches the one clicked then add letter
+                       return tile + letter + "";
+                   }
+                   return tile;
+               });
+               // Need this so it returns the array, if just returned what was above,
+               // it would return an object with indices mapped out
+               let player = !this.state.player; // Change to next player
+               return {
+                   board,
+                   player
+               };
+           }, this.gameOver);
+           
+           
+       }
+       console.log(this.state.gameOver)
+
        
     }
 
-    mapTiles=()=>{       
+    /***** MAP TILES *****/
+
+    mapTiles=()=>{
+              
         // Used to map the tiles to the Canvas
         return this.state.board.map((tileLetter,index)=>{
             
@@ -84,7 +109,9 @@ class Board extends React.Component{
         })
     }
 
-    gameOver(){
+    /***** GAME OVER *****/
+
+    gameOver=()=>{
         /* This will determine if game is over 
         * Someone got a line
         * Board is full and no one wins
@@ -116,44 +143,40 @@ class Board extends React.Component{
                 }
             }
         })
-        if(done){
-            
+        if(done){          
             // If the game is over then set the score
             this.setState({ gameOver: true, winner: this.state.player ? '1' : '2' },
             this.setWins)
         }
-           
-       
-  
-
-       
        // Passed into Tile component 
     }
 
-    // componentDidUpdate(){
-        
-        
-        
-    // }
+    /***** RESET *****/
+    /**
+     * Set the next player to whom lost
+     * Reset the board
+     * Change gameOver to false and the new screen renders
+     * Set winner to empty
+     */
     reset=()=>{
-        
+
         this.setState({
-            player: this.state.player,
+            player: this.state.winner === 'X' ? 'O':'X', 
             board: ["", "", "", "", "", "", "", "", ""],
             gameOver: false,
             winner: ''
         })
 
     }
+
+    /***** SET WINS *****/
+    /**
+     * Called from this.gameOver()
+     */
     setWins=()=>{
-        
-        // console.log(this.state.gameOver+" winner")
         this.setState(state => {
-            console.log(state.scores)
             let wins = state.scores.map((player, i) => {
-                console.log(player+" "+i)
                 if (this.state.winner === ((i + 1) + "")) {
-                   console.log('player '+player)
                     // If the index matches the one clicked then add letter
                     return player += 1;
                 } else {
@@ -165,67 +188,74 @@ class Board extends React.Component{
             // it would return an object with indices mapped out
             return {
                 scores: wins,
-
             };
         })
-        if (this.state.gameOver) {
-            
-                this.reset();
-            
-
-           
-            
-            return false;
-        } else {
-            return true;
-        }
-        
-        
-        
     }
 
     render(){
-        return (
-            <div>
+        if(this.state.gameOver){
+            // If game is over then ask if they want to play again
+            return (
                 <div>
-                    {this.state.scores}
+                    <div>Player {this.state.winner === '2' ? 'X': 'O'} Wins!</div>
+                    <div>play again?</div>
+                    <button onClick={this.reset}>Yes</button>
+                    <button>No</button>
+
+                    <div>
+
+                        <div>Current Player: {this.state.player ? 'X' : 'O'}</div>
+                        <div>
+                            {this.state.scores}
+                        </div>
+                        <svg>
+                            {this.mapTiles()}
+                        </svg>
+                    </div>
                 </div>
-                
+
+            )
+        }else{
+            // When game is started, remove the play again? text and who won
+            return (
+                <div>
+
+                    <div>Current Player: {this.state.player ? 'X' : 'O'}</div>
+                    <div>
+                        {this.state.scores}
+                    </div>
                     <svg>
                         {this.mapTiles()}
                     </svg>
-            </div>
+                </div>
+            )
+        }
 
-            
-        )
     }
 }
-class Canvas extends React.Component {
-    state = {}
 
-
-    render(){       
-        return (
-            
-                <Board />
-           
-        );
-    }
-
-}
-
+/*************************** LOADPLAYER COUNT COMPONENT ********************** */
+/**
+ * First loaded component from App
+ * Returns the amount of players playing
+ * Passes response throught 'setPlayer' which is a method in the App component 
+ * where it will load
+ */
 class LoadScreen extends React.Component{
+    
     state={}
 
     onePlayer=()=>{
+        // Sets player amount to 1
         this.props.setPlayers('1');
     }
 
     twoPlayer=()=> {
+        // Sets player amount to 2
+
         this.props.setPlayers('2');
     }
     render(){
-        
         return (
             <div>
                 <div>One Player or Two?</div>
@@ -236,35 +266,48 @@ class LoadScreen extends React.Component{
     }
 }
 
+/*************************** SELECT LETTER COMPONENT ********************** */
+/**
+ * Second component loaded, lets user select the letter they want
+ * Loaded in App
+ * Passes response back to App through 'setLetter'
+ */
 class SelectLetter extends React.Component{
-    state={
-
-    }
+    state={}
 
     playerX=()=>{
         // Player X starts as true
         this.props.setLetter(true);
     }
 
-    playerY=()=> {
+    playerO=()=> {
+        // Player O starts as false
         this.props.setLetter(false);
     }
+
+    random=()=>{
+        return Math.ceil(Math.random() * 10) <= 5 ? this.playerX() : this.playerO();
+    }
+
     render(){
         return(
             <div>
                 <div>Which letter is player 1?</div>
                 <button onClick={this.playerX}>X</button>
-                <button onClick={this.playerY}>O</button>
+                <button onClick={this.playerO}>O</button>
+                <button onClick={this.random}>RANDOM</button>
             </div>
         )
     }
 }
+
+/*************************** APP COMPONENT ********************************* */
+
 class App extends React.Component{
     state={
         gameStarted: false,
         players: '',
         player: ''
-
     }
 
     setPlayers=(players)=>{
@@ -280,14 +323,16 @@ class App extends React.Component{
     }
 
     render(){
-        console.log(this.state.players)
-        if(this.state.gameStarted) return <Canvas/>;
+        /* Loads components LoadScreen -> SelectLetter -> Canvas
+        * Canvas will pass in props based on responses from the first two components
+        */
+        if(this.state.gameStarted) return <Canvas player={this.state.player} players={this.state.players}/>;
         else if(this.state.players){return <SelectLetter setLetter={this.setLetter}/>}
         else { return <LoadScreen setPlayers={this.setPlayers} /> }
     }
 }
 
-
+/*************************** RENDER SCREEN ********************************** */
 ReactDOM.render(
     <App />,
     document.getElementById('root')
