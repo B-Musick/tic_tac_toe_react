@@ -59,10 +59,9 @@ class Canvas extends React.Component{
         singlePlayer: this.props.singlePlayer // Set when user clicks player amount
     }
 
-    componentDidUpdate(prevProps,prevState){
-        console.log(prevState.player)
+    componentDidUpdate(prevProps,prevState){      
         let currentPlayer = this.state.player ? 'X':'O'
-        console.log(this.state.singlePlayer === currentPlayer)
+      
         if ((this.state.players === '1') && (this.state.singlePlayer !== currentPlayer)){
             this.computersTurn();
         }
@@ -167,7 +166,14 @@ class Canvas extends React.Component{
             // If the game is over then set the score
             this.setState({ gameOver: true, winner: this.state.player ? '1' : '2' },
             this.setWins)
+        }else if(this.state.board.every(tile=>tile!=='')){
+            // If no one wins and board is full
+            setTimeout(()=>{
+                this.reset()
+            },2000)
+            
         }
+
        // Passed into Tile component 
     }
 
@@ -216,21 +222,42 @@ class Canvas extends React.Component{
         if(this.state.gameOver){
             // If game is over then ask if they want to play again
             return (
-                <div>
-                    <div>Player {this.state.winner === '2' ? 'X': 'O'} Wins!</div>
-                    <div>play again?</div>
-                    <button onClick={this.reset}>Yes</button>
-                    <button>No</button>
-
-                    <div>
-
-                        <div>Current Player: {this.state.player ? 'X' : 'O'}</div>
-                        <div>
-                            {this.state.scores}
-                        </div>
+                <div id="full-page-container">
+                    <div id="tic-title">TIC TAC TOE</div>
+                    <div id="left-column">
+                        
                         <svg>
                             {this.mapTiles()}
                         </svg>
+                    </div>
+                    <div id="right-column">
+                        <div id="player-score-container">
+                            <div>CURRENT PLAYER: {this.state.player ? 'X' : 'O'}</div>
+                            <div id="scores-container">
+                                <div id="player-x-score">
+                                    <div>PLAYER X</div>
+                                    <div>
+                                        {this.state.scores[1]}
+                                    </div>
+                                </div>
+                                <div id="player-y-score">
+                                    <div>PLAYER O</div>
+                                    <div>
+                                        {this.state.scores[0]}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="winner-addition-container">
+                            <div id="player-wins-container">PLAYER {this.state.winner === '2' ? 'X' : 'O'} WINS!</div>
+                            <div>PLAY AGAIN?</div>
+                            <div id="win-buttons">
+                                <button onClick={this.reset}>YES</button>
+                                <button>NO</button>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
@@ -238,20 +265,38 @@ class Canvas extends React.Component{
         }else{
             // When game is started, remove the play again? text and who won
             return (
-                <div>
-
-                    <div>Current Player: {this.state.player ? 'X' : 'O'}</div>
-                    <div>
-                        {this.state.scores}
-                    </div>
-                    <svg>
-                        {this.mapTiles()}
+                <div id="full-page-container">
+                    <div id="tic-title">TIC TAC TOE</div>
+                    <div id="left-column">
                         
-                    </svg>
+
+                        <svg>
+                            {this.mapTiles()}
+                        </svg>
+                    </div>
+                    <div id="right-column">
+                        <div id="player-score-container">
+                            <div>CURRENT PLAYER: {this.state.player ? 'X' : 'O'}</div>
+                            <div id="scores-container">
+                                <div id="player-x-score">
+                                    <div>PLAYER X</div>
+                                    <div>
+                                        {this.state.scores[1]}
+                                    </div>
+                                </div>
+                                <div id="player-y-score">
+                                    <div>PLAYER O</div>
+                                    <div>
+                                        {this.state.scores[0]}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             )
         }
-
     }
 }
 
@@ -278,10 +323,16 @@ class LoadScreen extends React.Component{
     }
     render(){
         return (
-            <div>
-                <div>One Player or Two?</div>
-                <button onClick={this.onePlayer}>One</button>
-                <button onClick={this.twoPlayer}>Two</button>
+            <div id="player-number">
+                <div id="player-number-inside">
+                    <div>ONE OR TWO PLAYERS?</div>
+                    <div id="player-number-buttons">
+                        <button onClick={this.onePlayer}>ONE</button>
+                        <button onClick={this.twoPlayer}>TWO</button>
+                    </div>
+
+                </div>
+
             </div>
         )
     }
@@ -313,12 +364,18 @@ class SelectLetter extends React.Component{
 
     render(){
         return(
-            <div>
-                <div>Which letter is player 1?</div>
-                <button onClick={this.playerX}>X</button>
-                <button onClick={this.playerO}>O</button>
-                <button onClick={this.random}>RANDOM</button>
+            <div id="player-number">
+                <div id="player-number-inside">
+                    <div>Which letter is player 1?</div>
+                    <div id="player-number-buttons">
+                        <button onClick={this.playerX}>X</button>
+                        <button onClick={this.playerO}>O</button>
+                        <button onClick={this.random}>RANDOM</button>
+                    </div>
+                </div>
             </div>
+            
+
         )
     }
 }
